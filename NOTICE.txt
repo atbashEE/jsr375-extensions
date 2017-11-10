@@ -1,0 +1,6 @@
+JSR-375 (Java EE Security API) extensions
+Copyright by Rudy De Busscher  / atbash.be
+
+------------------------------------------------------------------------
+See the file LICENSE
+------------------------------------------------------------------------
