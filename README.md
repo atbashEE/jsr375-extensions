@@ -10,3 +10,8 @@ The processing of the JWT payload, from the header, is up to the developer and t
 
 For more info, have a look at the [readme](https://github.com/atbashEE/jsr375-extensions/blob/master/examples/jwt/README.md).
   
+## code/oauth2
+
+Contains an extension using the OAuth2 Authorization code flow to authenticate the user within a Web application.
+
+For more info, have a look at the [readme](https://github.com/atbashEE/jsr375-extensions/blob/master/examples/oauth2/README.md).
