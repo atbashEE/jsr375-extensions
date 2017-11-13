@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+<h:head>
+    <title>Soteria OAuth2 extension example</title>
+</h:head>
+
+<h:body>
+    <h:outputText value="hello  #{viewBean.user.name}"/> <br/>
+    email : #{viewBean.user.email} <br/>
+    <h:graphicImage value="#{viewBean.user.picture}"/> <br/>
+
+    AUTHENTICATED_USER : #{viewBean.isCallerInRole('AUTHENTICATED_USER')}<br/>
+    SPEAKER : #{viewBean.isCallerInRole('SPEAKER')}
+</h:body>
+
+</html>

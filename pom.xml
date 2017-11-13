@@ -32,7 +32,9 @@
 
     <modules>
         <module>code/jwt</module>
+        <module>code/oauth2</module>
         <module>examples/jwt</module>
+        <module>examples/oauth2</module>
     </modules>
 
 </project>
