@@ -15,6 +15,9 @@
  */
 package be.atbash.ee.security.soteria.oauth2.oauth2;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  *
  */
@@ -25,4 +28,10 @@ public interface OAuth2Configuration {
     String getClientSecret();
 
     String getOAuth2Scopes();
+
+    boolean forceAccountSelection();
+
+    default Map<String, String> additionalParameters() {
+        return Collections.emptyMap();
+    }
 }

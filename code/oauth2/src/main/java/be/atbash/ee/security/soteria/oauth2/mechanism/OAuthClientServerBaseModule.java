@@ -16,6 +16,7 @@
 package be.atbash.ee.security.soteria.oauth2.mechanism;
 
 import be.atbash.ee.security.soteria.oauth2.identitystore.credential.TokenResponseCredential;
+import be.atbash.ee.security.soteria.oauth2.oauth2.OAuth2Configuration;
 import be.atbash.ee.security.soteria.oauth2.oauth2.OAuth2ServiceFactory;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
@@ -31,6 +32,8 @@ import javax.security.enterprise.identitystore.IdentityStoreHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static be.atbash.ee.security.soteria.oauth2.mechanism.util.Utils.isEmpty;
@@ -48,6 +51,9 @@ public class OAuthClientServerBaseModule implements HttpAuthenticationMechanism 
     @Inject
     private OAuth2ServiceFactory factory;
 
+    @Inject
+    private OAuth2Configuration configuration;
+
     @Override
     public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) throws AuthenticationException {
 
@@ -63,7 +69,8 @@ public class OAuthClientServerBaseModule implements HttpAuthenticationMechanism 
         }
 
         OAuth20Service service = factory.createOAuthService(request, "JFall17");
-        String authorizationUrl = service.getAuthorizationUrl();
+        Map<String, String> parameters = defineParameters();
+        String authorizationUrl = service.getAuthorizationUrl(parameters);
         try {
             request.getSession().setAttribute(OAuth20Service.class.getName(), service);
 
@@ -76,6 +83,15 @@ public class OAuthClientServerBaseModule implements HttpAuthenticationMechanism 
         }
 
         return SUCCESS;
+    }
+
+    private Map<String, String> defineParameters() {
+        Map<String, String> result = new HashMap<>();
+        if (configuration.forceAccountSelection()) {
+            result.put("prompt", "select_account");
+        }
+        result.putAll(configuration.additionalParameters());
+        return result;
     }
 
     private boolean isCallbackRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMsgContext) throws Exception {

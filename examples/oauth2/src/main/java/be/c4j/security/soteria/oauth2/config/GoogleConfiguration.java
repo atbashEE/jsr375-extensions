@@ -24,19 +24,23 @@ import be.atbash.ee.security.soteria.oauth2.oauth2.OAuth2Configuration;
 
 public class GoogleConfiguration implements OAuth2Configuration {
 
-
     @Override
     public String getClientId() {
-        return "25208181163-ekbphgh4s9k3f78g3j3lfulqcd9p7a1l.apps.googleusercontent.com";
+        return "208845979122-dgn7s1umrv2ll15ilg7lvmt81e4651si.apps.googleusercontent.com";
     }
 
     @Override
     public String getClientSecret() {
-        return "yGKzScuRFm90pR0pNWOedDRx";
+        return "UHErnUvaQEcKVYYqVBdjutrD";
     }
 
     @Override
     public String getOAuth2Scopes() {
         return "";
+    }
+
+    @Override
+    public boolean forceAccountSelection() {
+        return true;
     }
 }
