@@ -23,7 +23,7 @@
 
     <groupId>be.atbash.ee.security.jsr375</groupId>
     <artifactId>soteria-oauth2</artifactId>
-    <version>0.8</version>
+    <version>0.9-SNAPSHOT</version>
 
     <packaging>jar</packaging>
     <name>Soteria OAuth2</name>

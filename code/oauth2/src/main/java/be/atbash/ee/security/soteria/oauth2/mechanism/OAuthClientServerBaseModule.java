@@ -15,6 +15,7 @@
  */
 package be.atbash.ee.security.soteria.oauth2.mechanism;
 
+import be.atbash.ee.security.soteria.oauth2.HttpSessionUtil;
 import be.atbash.ee.security.soteria.oauth2.identitystore.credential.TokenResponseCredential;
 import be.atbash.ee.security.soteria.oauth2.oauth2.OAuth2Configuration;
 import be.atbash.ee.security.soteria.oauth2.oauth2.OAuth2ServiceFactory;
@@ -54,6 +55,9 @@ public class OAuthClientServerBaseModule implements HttpAuthenticationMechanism 
     @Inject
     private OAuth2Configuration configuration;
 
+    @Inject
+    private HttpSessionUtil sessionUtil;
+
     @Override
     public AuthenticationStatus validateRequest(HttpServletRequest request, HttpServletResponse response, HttpMessageContext httpMessageContext) throws AuthenticationException {
 
@@ -68,14 +72,15 @@ public class OAuthClientServerBaseModule implements HttpAuthenticationMechanism 
             throw (AuthenticationException) new AuthenticationException().initCause(e);
         }
 
-        OAuth20Service service = factory.createOAuthService(request, "JFall17");
+        String csrfToken = "JFall17"; // FIXME
+
+        OAuth20Service service = factory.createOAuthService(request, csrfToken);
+
         Map<String, String> parameters = defineParameters();
         String authorizationUrl = service.getAuthorizationUrl(parameters);
+
+        sessionUtil.storeUserState(request, service, csrfToken);
         try {
-            request.getSession().setAttribute(OAuth20Service.class.getName(), service);
-
-            request.getSession().setAttribute("OriginalRequest", request.getRequestURI());
-
             response.sendRedirect(authorizationUrl);
             return SEND_CONTINUE;
         } catch (IOException e) {
@@ -98,24 +103,22 @@ public class OAuthClientServerBaseModule implements HttpAuthenticationMechanism 
         if (request.getRequestURI().equals(callbackURL) && request.getParameter("code") != null) {
 
             if (!isEmpty(request.getParameter("state"))) {
-                try {
                     String state = request.getParameter("state");
-                    //Cookie cookie = stateCookieDAO.get(request);
-                    // TODO Support state token
-                    /*
-                    if (cookie != null && state.equals(cookie.getValue())) {
+
+                String storedState = sessionUtil.getState(request);
+                if (state.equals(storedState)) {
                         return true;
                     } else {
+                        /*
                         logger.log(WARNING,
                                 "State parameter provided with callback URL, but did not match cookie. " +
                                         "State param value: " + state + " " +
                                         "Cookie value: " + (cookie == null ? "<no cookie>" : cookie.getValue())
                         );
-                    }
-                    */
-                } finally {
-                    //stateCookieDAO.remove(request, response);
+                        */
+                    return false;
                 }
+
             }
             return true;
         }
@@ -152,7 +155,7 @@ public class OAuthClientServerBaseModule implements HttpAuthenticationMechanism 
                 return SUCCESS;
             }
         } catch (IllegalStateException e) {
-
+            // FIXME
         }
 
         return SEND_FAILURE;
